@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+<form action="" method="post">
+    {{ form.email.label }}: {{ form.email }}
+    <br>
+    {{ form.password.label }}: {{ form.password }}
+    <br>
+    {{ form.csrf_token }}
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
