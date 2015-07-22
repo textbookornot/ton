@@ -3,6 +3,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.migrate import Migrate
 from flask.ext.bcrypt import Bcrypt
 from flask.ext.login import LoginManager
+from flask.ext.restless import APIManager
+import wtforms_json
 
 
 app = Flask(__name__, instance_relative_config=True)
@@ -21,9 +23,15 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 
 # to manage user sessions
-login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+# rest api
+manager = APIManager(app, flask_sqlalchemy_db=db)
+
+# json wtforms
+wtforms_json.init()
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -31,3 +39,10 @@ def load_user(user_id):
 
 # views and models
 from . import views, models
+
+# create api endpoints for the models
+manager.create_api(
+    models.User,
+    methods=['GET'],
+    exclude_columns=['_password', '_set_password']
+)
